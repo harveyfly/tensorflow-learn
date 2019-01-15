@@ -10,6 +10,8 @@ def main():
     # 生成原始数据
     train_X = np.linspace(-1, 1, 100)
     train_Y = 2*train_X + np.random.randn(*train_X.shape)*0.3
+    # 重置图
+    tf.reset_default_graph()
     # 创建模型
     # 占位符
     X = tf.placeholder("float")
@@ -29,6 +31,9 @@ def main():
     # 定义参数
     training_epochs = 20
     display_step = 2
+    # 保存训练模型
+    saver = tf.train.Saver()
+    save_dir = "train_model/"
     # 启动session
     with tf.Session() as sess:
         sess.run(init)
@@ -47,16 +52,17 @@ def main():
                     plotdata["loss"].append(loss)
         
         print("Finished!")
+        saver.save(sess, save_dir + "linermodel.cpkt")
         print("cost=", sess.run(cost, feed_dict={X:train_X, Y:train_Y}), "W=", sess.run(W), "b=", sess.run(b))
         # 图形显示
+        plt.figure(1)
+        plt.subplot(211)
         plt.plot(train_X, train_Y, 'ro', label='Original data')
         plt.plot(train_X, sess.run(W) * train_X + sess.run(b), label='Fitted line')
         plt.legend()
-        plt.show()
 
         plotdata["avgloss"] = moving_average(plotdata["loss"])
-        plt.figure(1)
-        plt.subplot(211)
+        plt.subplot(212)
         plt.plot(plotdata["batchsize"], plotdata["avgloss"], 'b--')
         plt.xlabel("Minibatch number")
         plt.ylabel("Loss")
