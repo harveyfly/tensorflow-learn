@@ -50,7 +50,7 @@ def main():
         print("cost=", sess.run(cost, feed_dict={X:train_X, Y:train_Y}), "W=", sess.run(W), "b=", sess.run(b))
         # 图形显示
         plt.plot(train_X, train_Y, 'ro', label='Original data')
-        plt.plot(train_X, sess.run(W) * train_X + sess.run(b), label='Fittedline')
+        plt.plot(train_X, sess.run(W) * train_X + sess.run(b), label='Fitted line')
         plt.legend()
         plt.show()
 
@@ -63,5 +63,16 @@ def main():
         plt.title("Minibatch run vs. Training loss")
         plt.show()
 
+        print("x = 0.2, z = ", sess.run(z, feed_dict={X: 0.2}))
+
+def moving_average(a, w=10):
+    if len(a) < w:
+        return a[:]
+    return [val if idx < w else sum(a[(idx-w):idx]) /w for idx, val in enumerate(a)]
+
 if __name__ == '__main__':
+    plotdata = {
+        "batchsize": [],
+        "loss": []
+    }
     main()
